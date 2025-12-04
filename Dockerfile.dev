@@ -1,0 +1,21 @@
+# Dockerfile.dev
+
+# Usar Node en lugar de Nginx
+FROM node:18
+
+# Directorio de trabajo
+WORKDIR /app
+
+# Instalar dependencias
+COPY package*.json ./
+RUN npm install
+
+# Copiar código (en dev lo sobreescribiremos con un volumen)
+COPY . .
+
+# Exponer el puerto de Vite/CRA
+EXPOSE 5173
+
+# Comando de desarrollo (ajústalo según uses CRA o Vite)
+CMD ["npm", "run", "dev"]
+

@@ -1,0 +1,177 @@
+
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  /* Sistema de diseño AutoGestión CIES - SENA */
+
+  @layer base {
+    :root {
+      font-family: 'Roboto', sans-serif;
+      --background: 0 0% 100%;
+      --foreground: 222.2 84% 4.9%;
+
+      --card: 0 0% 100%;
+      --card-foreground: 222.2 84% 4.9%;
+
+      --popover: 0 0% 100%;
+      --popover-foreground: 222.2 84% 4.9%;
+
+      --primary: 222.2 47.4% 11.2%;
+      --primary-foreground: 210 40% 98%;
+
+      --secondary: 210 40% 96.1%;
+      --secondary-foreground: 222.2 47.4% 11.2%;
+
+      --muted: 210 40% 96.1%;
+      --muted-foreground: 215.4 16.3% 46.9%;
+
+      --accent: 210 40% 96.1%;
+      --accent-foreground: 222.2 47.4% 11.2%;
+
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 210 40% 98%;
+
+      --border: 214.3 31.8% 91.4%;
+      --input: 214.3 31.8% 91.4%;
+      --ring: 222.2 84% 4.9%;
+
+      --radius: 0.5rem;
+
+      /* Colores SENA AutoGestión */
+      --sena-green: 128 50% 45%;
+      --sena-green-hover: 128 50% 40%;
+      --sena-green-light: 128 50% 95%;
+      --sena-text-gray: 0 0% 45%;
+      --sena-text-light: 0 0% 65%;
+      --sena-border: 0 0% 85%;
+      /* Header & footer heights used by layout for mobile fixed header/footer */
+      --header-height: 4rem; /* 64px */
+      --footer-height: 4rem; /* 64px */
+    }
+
+    .dark {
+      --background: 222.2 84% 4.9%;
+      --foreground: 210 40% 98%;
+      --card: 222.2 84% 4.9%;
+      --card-foreground: 210 40% 98%;
+      --popover: 222.2 84% 4.9%;
+      --popover-foreground: 210 40% 98%;
+      --primary: 210 40% 98%;
+      --primary-foreground: 222.2 47.4% 11.2%;
+      --secondary: 217.2 32.6% 17.5%;
+      --secondary-foreground: 210 40% 98%;
+      --muted: 217.2 32.6% 17.5%;
+      --muted-foreground: 215 20.2% 65.1%;
+      --accent: 217.2 32.6% 17.5%;
+      --accent-foreground: 210 40% 98%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 210 40% 98%;
+      --border: 217.2 32.6% 17.5%;
+      --input: 217.2 32.6% 17.5%;
+      --ring: 212.7 26.8% 83.9%;
+    }
+  }
+
+  @layer base {
+    * {
+      @apply border-border;
+    }
+
+    body {
+      @apply bg-background text-foreground;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+  }
+
+  @layer components {
+    .sena-container {
+      @apply min-h-screen flex;
+    }
+    
+    .sena-form-panel {
+      @apply flex-1 bg-white flex items-center justify-center p-8;
+    }
+  .sena-welcome-panel {
+    @apply flex-1 relative overflow-hidden flex items-center justify-center text-white;
+    background: linear-gradient(to bottom right, #43A047, #2E7D32);
+  }
+
+  .sena-welcome-panel::before {
+    content: '';
+    @apply absolute inset-0;
+    background-image: url('/public/Background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.4; /* Ajusta este valor para más o menos visibilidad */
+    mix-blend-mode: soft-light; /* Otras opciones: overlay, multiply, screen */
+  }
+    .sena-form {
+      @apply w-full max-w-md space-y-6;
+    }
+    
+    .sena-input {
+      @apply w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200;
+    }
+    
+    .sena-input-group {
+      @apply relative;
+    }
+    
+    .sena-input-icon {
+      @apply absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5;
+    }
+    
+    .sena-button {
+        @apply w-full hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 bg-[linear-gradient(to_bottom_right,_#43A047,_#2E7D32)];
+      
+
+    }
+    
+    .sena-button-outline {
+      @apply w-full border border-green-600 text-green-600 hover:bg-green-50 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2;
+    }
+    
+    .sena-link {
+      @apply text-[#43A047] hover:text-green-700 font-medium transition-colors duration-200;
+    }
+    
+    .sena-text-muted {
+      @apply text-gray-500;
+    }
+    
+    .sena-footer-links {
+      @apply flex gap-6 text-sm text-gray-400 mt-8  justify-center;
+    }
+    
+    .sena-footer-links a {
+      @apply hover:text-gray-600 transition-colors duration-200;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-10px) rotate(1deg); }
+    66% { transform: translateY(10px) rotate(-1deg); }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sena-container {
+      @apply flex-col;
+    }
+    
+    .sena-welcome-panel {
+      @apply min-h-[200px] flex-none;
+    }
+    
+    .sena-form-panel {
+      @apply p-4;
+    }
+    /* If we want different header/footer on mobile we can override variables here */
+    :root {
+      --header-height: 4rem;
+      --footer-height: 4rem;
+    }
+  }

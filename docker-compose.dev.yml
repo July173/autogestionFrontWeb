@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"   # O usa "3000:3000" si CRA
+    volumes:
+      - .:/app        # Montar tu código local
+      - /app/node_modules  # Evitar conflictos de dependencias
+    environment:
+      - CHOKIDAR_USEPOLLING=true   # Para que detecte cambios en Windows/Mac
