@@ -85,13 +85,14 @@ export default function RequestRegistration() {
 
   const [showConfirm, setShowConfirm] = useState(false);
   // Modes and selections for create vs select flows
-  const [enterpriseMode, setEnterpriseMode] = useState<'select' | 'create'>('create');
+  // Default to 'select' so user first chooses from existing records
+  const [enterpriseMode, setEnterpriseMode] = useState<'select' | 'create'>('select');
   const [selectedEnterpriseId, setSelectedEnterpriseId] = useState<number | null>(null);
 
-  const [bossMode, setBossMode] = useState<'select' | 'create'>('create');
+  const [bossMode, setBossMode] = useState<'select' | 'create'>('select');
   const [selectedBossId, setSelectedBossId] = useState<number | null>(null);
 
-  const [humanTalentMode, setHumanTalentMode] = useState<'select' | 'create'>('create');
+  const [humanTalentMode, setHumanTalentMode] = useState<'select' | 'create'>('select');
   const [selectedHumanTalentId, setSelectedHumanTalentId] = useState<number | null>(null);
 
   // Options populated from API
