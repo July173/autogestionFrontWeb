@@ -95,9 +95,10 @@ export default function AssignReviewModal({ apprentice, isOpen, onClose, onAppro
   const performConfirmedAction = async () => {
     if (!confirmAction || !apprentice.request_id) return;
     setConfirmOpen(false);
+    const currentAction = confirmAction; // Save current action before any state changes
     try {
       let payload: any = {};
-      if (confirmAction === 'approve') {
+      if (currentAction === 'approve') {
         payload = {
           type: 'APROBADO',
           content: valuationMessage,
@@ -105,7 +106,7 @@ export default function AssignReviewModal({ apprentice, isOpen, onClose, onAppro
           fecha_fin_contrato: endDate || undefined,
           request_state: 'PRE-APROBADO',
         };
-      } else if (confirmAction === 'reject') {
+      } else if (currentAction === 'reject') {
         payload = {
           type: 'RECHAZADO',
           content: valuationMessage,
@@ -117,19 +118,22 @@ export default function AssignReviewModal({ apprentice, isOpen, onClose, onAppro
       console.log('[AssignReviewModal] performAction result for confirm', { result });
       if (result.success) {
         setNotifType('success');
-        setNotifTitle(confirmAction === 'approve' ? 'Aprobación enviada' : 'Rechazo enviado');
+        setNotifTitle(currentAction === 'approve' ? 'Aprobación enviada' : 'Rechazo enviado');
         setNotifMessage('La acción se envió correctamente.');
         setNotifOpen(true);
-        // Esperar a que el usuario cierre la notificación antes de cerrar el modal
-        // onClose y callbacks se llaman en el onClose del NotificationModal
+        // Keep confirmAction set so NotificationModal onClose can call the correct callback
+        // confirmAction will be reset when the notification closes
       } else {
         setNotifType('warning');
         setNotifTitle('Error');
         setNotifMessage(result.error || 'Ocurrió un error al procesar la acción');
         setNotifOpen(true);
         setErrors((s) => ({ ...s, valuation: 'Error al enviar la solicitud. Intenta nuevamente.' }));
+        // Reset confirmAction only on error so we don't trigger callbacks
+        setConfirmAction(null);
       }
-    } finally {
+    } catch (err) {
+      // Reset on exception
       setConfirmAction(null);
     }
   };
@@ -204,7 +208,10 @@ export default function AssignReviewModal({ apprentice, isOpen, onClose, onAppro
           if (notifType === 'success') {
             if (confirmAction === 'approve' && onApprove) onApprove();
             if (confirmAction === 'reject' && onReject) onReject();
+            setConfirmAction(null); // Reset after calling callbacks
             onClose();
+          } else {
+            setConfirmAction(null); // Reset on error close as well
           }
         }}
         type={notifType === 'success' ? 'success' : 'warning'}

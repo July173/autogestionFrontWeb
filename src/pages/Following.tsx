@@ -1,15 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import InstructorAssignmentsTable from '@/components/ApplicationEvaluation/InstructorAssignmentsTable';
+import { getUserById } from '@/Api/Services/User';
+import FilterBar from '@/components/FilterBar';
+import ReloadButton from '@/components/ReloadButton';
+import { getPrograms } from '@/Api/Services/Program';
+import { getModalityProductiveStages } from '@/Api/Services/ModalityProductiveStage';
+
+const estadoOptions = [
+  { value: 'ASIGNADO', label: 'Asignado' },
+  { value: 'RECHAZADO', label: 'Rechazado' },
+  { value: 'SIN_ASIGNAR', label: 'Sin asignar' },
+  { value: 'VERIFICANDO', label: 'Verificando' },
+  { value: 'PRE-APROBADO', label: 'Pre-aprobado' },
+];
+
+interface InstructorAssignmentFilters {
+  apprentice_name?: string;
+  apprentice_id_number?: string;
+  modality_name?: string;
+  program_name?: string;
+  request_state?: string;
+}
 
 export const Following = () => {
-  // This page shows assignments with state ASIGNADO for current user-instructor
-  const [instructorId, setInstructorId] = React.useState<number | undefined>(undefined);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [instructorId, setInstructorId] = useState<number | undefined>(undefined);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [programOptions, setProgramOptions] = useState<{ value: string; label: string }[]>([]);
+  const [modalityOptions, setModalityOptions] = useState<{ value: string; label: string }[]>([]);
+  const [tableRefresh, setTableRefresh] = useState<(() => void) | null>(null);
+  const [filters, setFilters] = useState<InstructorAssignmentFilters>({});
 
-  React.useEffect(() => {
-    const load = async () => {
+  useEffect(() => {
+    const loadInstructorFromStorage = async () => {
       setLoading(true);
+      setError(null);
       try {
         const raw = localStorage.getItem('user_dashboard');
         if (!raw) {
@@ -24,20 +49,90 @@ export const Following = () => {
           setLoading(false);
           return;
         }
-        // lazy import to reuse service
-        const { getUserById } = await import('@/Api/Services/User');
+
         const user = await getUserById(userId);
         const instructor = user?.instructor;
-        if (instructor && instructor.id) setInstructorId(Number(instructor.id));
-        else setError('El usuario no tiene un instructor asociado');
-      } catch (e: any) {
-        setError(e?.message || 'Error al obtener datos de usuario');
+        if (instructor && instructor.id) {
+          setInstructorId(Number(instructor.id));
+        } else {
+          setError('El usuario no tiene un instructor asociado');
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        setError(message || 'Error al obtener datos de usuario');
       } finally {
         setLoading(false);
       }
     };
-    load();
+
+    loadInstructorFromStorage();
   }, []);
+
+  // Load programs, modalities
+  useEffect(() => {
+    const loadAssets = async () => {
+      try {
+        const programs = await getPrograms();
+        setProgramOptions([
+          { value: 'TODOS', label: 'Todos los programas' },
+          ...programs.map((p: { id: number; nombre: string }) => ({ value: String(p.id), label: p.nombre }))
+        ]);
+      } catch (err) {
+        // ignore
+      }
+
+      try {
+        const mods = await getModalityProductiveStages();
+        setModalityOptions([
+          { value: 'TODOS', label: 'Todas las Modalidades' },
+          ...(Array.isArray(mods) ? mods.map((m: { id: number; name_modality: string }) => ({ value: String(m.id), label: m.name_modality })) : [])
+        ]);
+      } catch (err) {
+        // ignore
+      }
+    };
+
+    loadAssets();
+  }, []);
+
+  // Handle filter changes
+  const handleFilter = (params: Record<string, string>) => {
+    const newFilters: InstructorAssignmentFilters = {};
+    
+    // Search by name or document number
+    if (params.search && params.search.trim() !== '') {
+      const searchValue = params.search.trim();
+      // Detect if the search is a number (document ID) or text (name)
+      if (/^\d+$/.test(searchValue)) {
+        newFilters.apprentice_id_number = searchValue;
+      } else {
+        newFilters.apprentice_name = searchValue;
+      }
+    }
+    
+    // Program filter - use programa_label directly from FilterBar (ProgramAutocomplete's label)
+    if (params.programa && params.programa !== 'TODOS') {
+      // Use the label sent directly from FilterBar
+      if (params.programa_label && params.programa_label !== 'Todos los programas') {
+        newFilters.program_name = params.programa_label;
+      }
+    }
+    
+    // Modality filter
+    if (params.modalidad && params.modalidad !== 'TODOS') {
+      const modalityOption = modalityOptions.find(m => m.value === params.modalidad);
+      if (modalityOption && modalityOption.label) {
+        newFilters.modality_name = modalityOption.label;
+      }
+    }
+    
+    // State filter
+    if (params.estado && params.estado !== 'TODOS') {
+      newFilters.request_state = params.estado;
+    }
+    
+    setFilters(newFilters);
+  };
 
   const actionRenderer = (row: any) => (
     <div className="flex gap-2">
@@ -47,14 +142,58 @@ export const Following = () => {
   );
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Seguimientos</h1>
+    <div className="bg-white relative rounded-[10px] w-full p-4 sm:p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">Seguimientos</h1>
+        <div>
+          <ReloadButton
+            onClick={() => {
+              if (tableRefresh) {
+                tableRefresh();
+              }
+            }}
+            title="Recargar"
+          />
+        </div>
+      </div>
+
       {loading ? (
         <div className="text-gray-600">Cargando datos del usuario...</div>
       ) : error ? (
         <div className="text-red-600">{error}</div>
       ) : instructorId ? (
-        <InstructorAssignmentsTable instructorId={instructorId} filterState={'ASIGNADO'} renderAction={actionRenderer} />
+        <>
+          <FilterBar
+            onFilter={handleFilter}
+            selects={[
+              {
+                name: 'estado',
+                value: '',
+                options: estadoOptions,
+                placeholder: 'Todos los Estados',
+              },
+              {
+                name: 'modalidad',
+                value: '',
+                options: modalityOptions,
+                placeholder: 'Modalidad',
+                minWidth: '220px',
+                maxWidth: '420px'
+              },
+              { name: 'programa', value: '', options: programOptions, placeholder: 'Programa' }
+            ]}
+            inputWidth="100%"
+            searchPlaceholder="Buscar por nombre, documento..."
+          />
+
+          <InstructorAssignmentsTable
+            instructorId={instructorId}
+            filterState="ASIGNADO"
+            filters={filters}
+            renderAction={actionRenderer}
+            onRefreshReady={(refreshFn) => setTableRefresh(() => refreshFn)}
+          />
+        </>
       ) : (
         <div className="text-gray-600">No se encontró instructor asociado al usuario.</div>
       )}
@@ -63,4 +202,3 @@ export const Following = () => {
 };
 
 export default Following;
-
