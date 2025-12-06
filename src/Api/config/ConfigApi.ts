@@ -249,6 +249,7 @@ export const ENDPOINTS = {
     getAssignationInstructorById : `${API_BASE_URL}assign/asignation_instructor/{id}/`,
     filterAssignationInstructor : `${API_BASE_URL}assign/asignation_instructor/filtered/`,
     reassignInstructor : `${API_BASE_URL}assign/asignation_instructor_history/reasignar-instructor/`,
+    VisitsAssignationInstructor : `${API_BASE_URL}assign/asignation_instructor/visits-by-asignation/`,
   },
   Boss :{
     allBoss : `${API_BASE_URL}assign/boss/`,

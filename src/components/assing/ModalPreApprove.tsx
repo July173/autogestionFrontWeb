@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LoadingOverlay from '../LoadingOverlay';
 import NotificationModal from '@/components/NotificationModal';
+import ConfirmModal from '@/components/ConfirmModal';
 import ModalReject from './ModalReject';
 import { patchMessageRequest, getRequestMessages, rejectRequest } from '@/Api/Services/RequestAssignaton';
 import type { RequestMessage } from '@/Api/types/Modules/assign.types';
@@ -28,6 +29,7 @@ interface ModalPreApproveProps {
 export default function ModalPreApprove({ apprentice, onClose, onAssignmentComplete, assignedInstructor = null, initialMessages = [] }: ModalPreApproveProps) {
   const [assigning, setAssigning] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showConfirmApproveModal, setShowConfirmApproveModal] = useState(false);
   const [message, setMessage] = useState('');
   const [messageError, setMessageError] = useState('');
   const [showResultModal, setShowResultModal] = useState(false);
@@ -88,12 +90,18 @@ export default function ModalPreApprove({ apprentice, onClose, onAssignmentCompl
     return whoseMsg === 'INSTRUCTOR' && typeMsg.includes('RECHAZAD');
   });
 
-  const handleApprove = async () => {
-    if (!requestAsignationId) return;
+  const handleApprove = () => {
     if (!message || !message.trim()) {
       setMessageError('El mensaje es obligatorio');
       return;
     }
+    // Abrir modal de confirmación
+    setShowConfirmApproveModal(true);
+  };
+
+  const handleConfirmApprove = async () => {
+    if (!requestAsignationId) return;
+    setShowConfirmApproveModal(false);
     setAssigning(true);
     try {
       const payload: any = {
@@ -375,6 +383,17 @@ export default function ModalPreApprove({ apprentice, onClose, onAssignmentCompl
       {showRejectModal && requestAsignationId && (
         <ModalReject apprenticeName={apprentice.name} requestId={requestAsignationId} onClose={() => setShowRejectModal(false)} onConfirm={handleConfirmReject} />
       )}
+
+      <ConfirmModal
+        isOpen={showConfirmApproveModal}
+        title="Confirmar aprobación"
+        message="¿Estás seguro de que deseas aprobar esta solicitud?"
+        confirmText="Sí, aprobar"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmApprove}
+        onCancel={() => setShowConfirmApproveModal(false)}
+        zIndex={60}
+      />
 
       {showResultModal && (
         <NotificationModal isOpen={showResultModal} onClose={() => { setShowResultModal(false); onAssignmentComplete?.(); onClose(); }} type={resultType} title={resultType === 'success' ? 'Acción completada' : 'Error'} message={resultMessage} />
