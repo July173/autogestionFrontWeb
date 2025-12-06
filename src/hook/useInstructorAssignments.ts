@@ -31,8 +31,10 @@ export default function useInstructorAssignments(
       // Build filters object to send to the API
       const apiFilters: InstructorAssignmentFilters = { ...additionalFilters };
       
-      // Add request_state filter if provided and not 'ALL'
-      if (state && state.toUpperCase() !== 'ALL') {
+      // Add request_state filter from filterState prop ONLY if:
+      // 1. filterState is provided and not 'ALL'
+      // 2. AND there's no request_state already set in additionalFilters (user's filter takes priority)
+      if (state && state.toUpperCase() !== 'ALL' && !additionalFilters?.request_state) {
         apiFilters.request_state = state;
       }
       
