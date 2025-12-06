@@ -112,12 +112,11 @@ export const ApplicationEvaluation = () => {
       }
     }
     
-    // Program filter
+    // Program filter - use programa_label directly from FilterBar (ProgramAutocomplete's label)
     if (params.programa && params.programa !== 'TODOS') {
-      // Find program name from options
-      const programOption = programOptions.find(p => p.value === params.programa);
-      if (programOption && programOption.label) {
-        newFilters.program_name = programOption.label;
+      // Use the label sent directly from FilterBar
+      if (params.programa_label && params.programa_label !== 'Todos los programas') {
+        newFilters.program_name = params.programa_label;
       }
     }
     
