@@ -133,7 +133,12 @@ const FilterBar: React.FC<FilterBarProps> = ({
     }
     // schedule new call
     debounceRef.current = window.setTimeout(() => {
-      onFilter({ search, ...selectValues, programa: programOption?.value || '' });
+      onFilter({ 
+        search, 
+        ...selectValues, 
+        programa: programOption?.value || '',
+        programa_label: programOption?.label || '' // Send the label directly for program_name filter
+      });
       debounceRef.current = null;
     }, 300);
 
@@ -155,7 +160,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
     });
     setSelectValues(cleared);
     setProgramOption(null);
-    onFilter({ search: '', ...cleared, programa: '' });
+    onFilter({ search: '', ...cleared, programa: '', programa_label: '' });
   };
 
   return (
