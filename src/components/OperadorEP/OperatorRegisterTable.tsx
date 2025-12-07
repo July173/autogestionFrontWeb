@@ -107,9 +107,7 @@ const OperatorRegisterTable: React.FC<OperatorRegisterTableProps> = ({
   const handleConfirmRegister = async (message: string) => {
     if (!selectedRow?.id) return;
 
-    console.log('[OperatorRegisterTable] Registrando mensaje para solicitud:', selectedRow.id);
     const result = await registerOperatorMessage(selectedRow.id, message);
-    console.log('[OperatorRegisterTable] Resultado del registro:', result);
 
     setShowRegisterModal(false);
 
@@ -124,11 +122,9 @@ const OperatorRegisterTable: React.FC<OperatorRegisterTableProps> = ({
         [selectedRow.id!]: true
       }));
       
-      console.log('[OperatorRegisterTable] Estado actualizado localmente, verificando...');
       // Verificar inmediatamente después de registrar
       setTimeout(async () => {
         const isNowRegistered = await checkOperatorRegistration(selectedRow.id!);
-        console.log('[OperatorRegisterTable] Verificación post-registro:', isNowRegistered);
         if (isNowRegistered) {
           setRegistrationStatus(prev => ({
             ...prev,

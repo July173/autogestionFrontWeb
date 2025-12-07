@@ -46,9 +46,14 @@ interface Props {
    * Optional filters to apply to the instructor assignments endpoint.
    */
   filters?: InstructorAssignmentFilters;
+  /**
+   * If true, requires that ASIGNADO/RECHAZADO/PRE-APROBADO requests have an instructor message to be shown.
+   * Default: true
+   */
+  requireInstructorMessage?: boolean;
 }
 
-const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState = 'ALL', renderAction, onRefreshReady, filters }) => {
+const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState = 'ALL', renderAction, onRefreshReady, filters, requireInstructorMessage = true }) => {
   const { data, loading, error, refresh } = useInstructorAssignments(instructorId, filterState, filters);
   const [rows, setRows] = useState<AssignmentRow[]>([]);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
@@ -102,7 +107,7 @@ const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState
     // Apply filtering rules requested:
     // - Always hide requests with state `SIN_ASIGNAR`.
     // - For states `ASIGNADO`, `RECHAZADO`, `PRE-APROBADO` show them only if
-    //   there is a message whose `whose_message` equals `INSTRUCTOR`.
+    //   there is a message whose `whose_message` equals `INSTRUCTOR` (if requireInstructorMessage is true).
     // - Then apply the optional `filterState` prop (if provided and not 'ALL').
     const filtered = mapped.filter((r: any) => {
       const s = (r.estado_solicitud || '').toString().toUpperCase();
@@ -110,8 +115,8 @@ const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState
       // Hide explicitly unassigned
       if (s === 'SIN_ASIGNAR') return false;
 
-      // If the state is one of these, require an instructor message to show
-      if (['ASIGNADO', 'RECHAZADO', 'PRE-APROBADO'].includes(s)) {
+      // If requireInstructorMessage is true and the state is one of these, require an instructor message to show
+      if (requireInstructorMessage && ['ASIGNADO', 'RECHAZADO', 'PRE-APROBADO'].includes(s)) {
         const messages = r.messages || [];
         const hasInstructorMsg = messages.some((m: any) => {
           const whoseMsg = String(m.whose_message || '').toUpperCase();
@@ -127,7 +132,7 @@ const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState
     });
 
     setRows(filtered);
-  }, [data, filterState]);
+  }, [data, filterState, requireInstructorMessage]);
 
   useEffect(() => {
     setExpandedIdx(null);

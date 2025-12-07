@@ -139,47 +139,60 @@ export const Following = () => {
 
   const actionRenderer = (row: any) => {
     const stateAsignation = row.state_asignation || '';
-    
-    // DEBUG: Ver el valor exacto
-    console.log('=== RENDERIZANDO BOTÓN ===');
-    console.log('state_asignation RAW:', row.state_asignation);
-    console.log('state_asignation procesado:', stateAsignation);
-    console.log('Tipo:', typeof stateAsignation);
-    console.log('Largo:', stateAsignation.length);
-    console.log('Comparación con "Concertación":', stateAsignation === 'Concertación');
-    
+
+    // Define los datos visuales para cada estado
     const getButtonConfig = () => {
       if (!stateAsignation || stateAsignation === '') {
-        console.log('→ Botón: ASIGNADO (vacío)');
-        return { label: 'Asignado', color: 'bg-orange-300 hover:bg-orange-400 text-white font-medium', disabled: false };
+        return {
+          label: 'Asignado',
+          icon: (
+            <svg className="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#c2410c" strokeWidth="2" fill="none"/><path d="M12 8v4" stroke="#c2410c" strokeWidth="2" strokeLinecap="round"/><circle cx="12" cy="16" r="1" fill="#c2410c" /></svg>
+          ),
+          style: 'bg-orange-100 text-black font-bold w-36 h-10 py-2 rounded-xl border-0 shadow-sm text-sm hover:bg-orange-200',
+          disabled: false,
+        };
       }
       if (stateAsignation === 'Concertación') {
-        console.log('→ Botón: CONCERTACIÓN');
-        return { label: 'Concertación', color: 'bg-purple-500 hover:bg-purple-600 text-white font-medium', disabled: false };
+        return {
+          label: 'Concertación',
+          icon: (
+            <svg className="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75" stroke="#6d28d9" strokeWidth="2"/><path d="M9 17l6 0" stroke="#6d28d9" strokeWidth="2" strokeLinecap="round"/><path d="M16 6l2 2M6 16l2 2" stroke="#6d28d9" strokeWidth="2"/></svg>
+          ),
+          style: 'bg-purple-200 text-black font-bold py-2 rounded-xl border-0 shadow-sm text-sm hover:bg-purple-300 w-36 h-10',
+          disabled: false,
+        };
       }
       if (stateAsignation === 'Visita parcial') {
-        console.log('→ Botón: VISITA PARCIAL');
-        return { label: 'Visita Parcial', color: 'bg-orange-600 hover:bg-orange-700 text-white font-bold', disabled: false };
+        return {
+          label: 'Visita Parcial',
+          icon: (
+            <svg className="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 12h.01" /><path d="M8 12h.01" /><path d="M12 16h.01" /><rect x="5" y="4" width="14" height="16" rx="3" stroke="#ea580c" strokeWidth="2" fill="none"/><path d="M9 8h6M9 12h.01" stroke="#ea580c" strokeWidth="2" strokeLinecap="round"/></svg>
+          ),
+          style: 'bg-orange-300 text-black font-bold py-2 rounded-xl border-0 shadow-sm text-sm hover:bg-orange-400 w-36 h-10',
+          disabled: false,
+        };
       }
       if (stateAsignation === 'Visita final') {
-        console.log('→ Botón: VISITA FINAL');
-        return { label: 'Visita Final', color: 'bg-yellow-500 hover:bg-yellow-600 text-black font-bold', disabled: true };
+        return {
+          label: 'Visita Final',
+          icon: (
+            <svg className="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#fde047" stroke="#a16207" strokeWidth="2"/><path d="M9.5 12.5l2 2l3-3" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          ),
+          style: 'bg-yellow-300 text-black font-bold py-2 rounded-xl border-0 shadow-sm text-sm hover:bg-yellow-200 w-36 h-10',
+          disabled: true,
+        };
       }
-      console.log('→ Botón: DESCONOCIDO');
-      return { label: 'Desconocido', color: 'bg-gray-400 text-white font-medium', disabled: true };
+      return {
+        label: 'Desconocido',
+        icon: null,
+        style: 'bg-gray-300 text-black font-bold px-7 py-2 rounded-full border-0 shadow-sm text-base',
+        disabled: true,
+      };
     };
 
     const buttonConfig = getButtonConfig();
-
     const handleClick = () => {
       if (!buttonConfig.disabled) {
-        // Debug: ver qué datos tiene row
-        console.log('=== ROW DATA ===');
-        console.log('numero_ficha:', row.numero_ficha);
-        console.log('programa:', row.programa);
-        console.log('date_start_production_stage:', row.date_start_production_stage);
-        console.log('state_asignation:', row.state_asignation);
-        console.log('Full row:', row);
         setSelectedRow(row);
         setShowUpdateModal(true);
       }
@@ -188,10 +201,12 @@ export const Following = () => {
     return (
       <div className="flex gap-2">
         <button
-          className={`px-3 py-1 ${buttonConfig.color} rounded text-sm transition-colors ${buttonConfig.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+          type="button"
+          className={buttonConfig.style}
           onClick={handleClick}
           disabled={buttonConfig.disabled}
         >
+          {buttonConfig.icon}
           {buttonConfig.label}
         </button>
       </div>
@@ -249,6 +264,7 @@ export const Following = () => {
             filters={filters}
             renderAction={actionRenderer}
             onRefreshReady={(refreshFn) => setTableRefresh(() => refreshFn)}
+            requireInstructorMessage={false}
           />
         </>
       ) : (
@@ -275,10 +291,8 @@ export const Following = () => {
             setSelectedRow(null);
           }}
           onSuccess={() => {
-            console.log('=== MODAL CERRADO, RECARGANDO TABLA ===');
             // Refresh table to update button state
             if (tableRefresh) {
-              console.log('Ejecutando tableRefresh...');
               tableRefresh();
             } else {
               console.warn('tableRefresh NO está disponible');

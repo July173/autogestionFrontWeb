@@ -100,9 +100,7 @@ export default function useAssignReviewModal(
         payload.request_state = 'PRE-APROBADO';
       }
 
-      console.log('[useAssignReviewModal] sending patch payload', { requestId, payload });
       const resp = await patchMessageRequest(Number(requestId), payload);
-      console.log('[useAssignReviewModal] patch response', { resp });
       try {
         console.log('[useAssignReviewModal] patch response (string)', JSON.stringify(resp));
       } catch (e) {

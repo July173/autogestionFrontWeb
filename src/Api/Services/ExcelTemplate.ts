@@ -133,7 +133,9 @@ class ExcelTemplateService {
         body: formData,
       });
 
-      if (!response.ok) {
+      // Accept both 200 (OK) and 207 (Multi-Status) as valid responses
+      // 207 is used for batch operations with mixed results
+      if (!response.ok && response.status !== 207) {
         const errorData = await response.json();
         throw new Error(errorData.error || `Error al procesar archivo: ${response.status}`);
       }
@@ -159,7 +161,9 @@ class ExcelTemplateService {
         body: formData,
       });
 
-      if (!response.ok) {
+      // Accept both 200 (OK) and 207 (Multi-Status) as valid responses
+      // 207 is used for batch operations with mixed results
+      if (!response.ok && response.status !== 207) {
         const errorData = await response.json();
         throw new Error(errorData.error || `Error al procesar archivo: ${response.status}`);
       }

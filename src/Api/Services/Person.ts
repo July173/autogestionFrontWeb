@@ -62,7 +62,6 @@ export async function registerApprentice(payload: RegisterPayload): Promise<Regi
     // Extract backend response for debugging
     const errorResponse = await response.text(); 
     // debugging
-    console.log('Respuesta del backend:', errorResponse); 
     throw new Error(errorResponse || "Error en el registro");
   }
   return response.json();

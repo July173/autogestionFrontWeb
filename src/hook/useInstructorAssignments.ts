@@ -40,8 +40,6 @@ export default function useInstructorAssignments(
       
       const res = await getInstructorAssignments(id, apiFilters);
       const dataArray = Array.isArray(res) ? res : (res.data || []);
-      console.log('=== INSTRUCTOR ASSIGNMENTS LOADED ===');
-      console.log('Total rows:', dataArray.length);
       if (dataArray.length > 0) {
         console.log('First row state_asignation:', dataArray[0].state_asignation);
         console.log('First row sample:', dataArray[0]);
@@ -61,12 +59,7 @@ export default function useInstructorAssignments(
   }, [instructorId, filterState, filters, load]);
 
   const refresh = useCallback(() => {
-    console.log('=== REFRESH CALLED ===');
-    console.log('instructorId:', instructorId);
-    console.log('filterState:', filterState);
-    console.log('filters:', filters);
     if (instructorId) {
-      console.log('Ejecutando load...');
       load(instructorId, filterState, filters);
     } else {
       console.warn('No instructorId, no se puede recargar');

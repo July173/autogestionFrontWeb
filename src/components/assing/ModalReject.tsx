@@ -67,12 +67,9 @@ const ModalReject: React.FC<ModalRejectProps> = ({
     setShowConfirm(false);
     setIsSubmitting(true);
     try {
-      console.log('[ModalReject] calling onConfirm', { requestId, rejectionMessage });
       const result = onConfirm(rejectionMessage);
       if (result && typeof (result as Promise<void>).then === 'function') {
-        console.log('[ModalReject] onConfirm returned a promise, awaiting...');
         await (result as Promise<any>);
-        console.log('[ModalReject] onConfirm promise resolved');
       } else {
         console.log('[ModalReject] onConfirm returned synchronously', { result });
       }
@@ -82,7 +79,6 @@ const ModalReject: React.FC<ModalRejectProps> = ({
     } finally {
       // only set state if still mounted
       if (mounted) setIsSubmitting(false);
-      console.log('[ModalReject] handleSubmit finished, isSubmitting=false');
     }
   };
 
