@@ -11,6 +11,11 @@ type AssignmentRow = InstructorAssignment & {
   raw?: any;
   ficha?: string;
   modalidad?: string;
+  state_asignation?: string;
+  asignation_instructor_id?: number;
+  numero_ficha?: string;
+  programa?: string;
+  date_start_production_stage?: string;
 };
 
 interface InstructorAssignmentFilters {
@@ -41,9 +46,14 @@ interface Props {
    * Optional filters to apply to the instructor assignments endpoint.
    */
   filters?: InstructorAssignmentFilters;
+  /**
+   * If true, requires that ASIGNADO/RECHAZADO/PRE-APROBADO requests have an instructor message to be shown.
+   * Default: true
+   */
+  requireInstructorMessage?: boolean;
 }
 
-const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState = 'ALL', renderAction, onRefreshReady, filters }) => {
+const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState = 'ALL', renderAction, onRefreshReady, filters, requireInstructorMessage = true }) => {
   const { data, loading, error, refresh } = useInstructorAssignments(instructorId, filterState, filters);
   const [rows, setRows] = useState<AssignmentRow[]>([]);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
@@ -82,6 +92,12 @@ const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState
         estado_solicitud: it.estado_solicitud || it.request_state || '',
         modalidad: it.modalidad || it.modality || '',
         ficha: it.ficha || it.file_number || '',
+        // ¡AGREGADO! Campo para el estado de asignación (usado en Following.tsx)
+        state_asignation: it.state_asignation || '',
+        asignation_instructor_id: it.asignation_instructor_id || it.id,
+        numero_ficha: it.numero_ficha || '',
+        programa: it.programa || '',
+        date_start_production_stage: it.date_start_production_stage || '',
         // messages array returned by the instructor assignments endpoint
         messages: messages,
         raw: it,
@@ -91,7 +107,7 @@ const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState
     // Apply filtering rules requested:
     // - Always hide requests with state `SIN_ASIGNAR`.
     // - For states `ASIGNADO`, `RECHAZADO`, `PRE-APROBADO` show them only if
-    //   there is a message whose `whose_message` equals `INSTRUCTOR`.
+    //   there is a message whose `whose_message` equals `INSTRUCTOR` (if requireInstructorMessage is true).
     // - Then apply the optional `filterState` prop (if provided and not 'ALL').
     const filtered = mapped.filter((r: any) => {
       const s = (r.estado_solicitud || '').toString().toUpperCase();
@@ -99,8 +115,8 @@ const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState
       // Hide explicitly unassigned
       if (s === 'SIN_ASIGNAR') return false;
 
-      // If the state is one of these, require an instructor message to show
-      if (['ASIGNADO', 'RECHAZADO', 'PRE-APROBADO'].includes(s)) {
+      // If requireInstructorMessage is true and the state is one of these, require an instructor message to show
+      if (requireInstructorMessage && ['ASIGNADO', 'RECHAZADO', 'PRE-APROBADO'].includes(s)) {
         const messages = r.messages || [];
         const hasInstructorMsg = messages.some((m: any) => {
           const whoseMsg = String(m.whose_message || '').toUpperCase();
@@ -116,7 +132,7 @@ const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState
     });
 
     setRows(filtered);
-  }, [data, filterState]);
+  }, [data, filterState, requireInstructorMessage]);
 
   useEffect(() => {
     setExpandedIdx(null);

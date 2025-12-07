@@ -276,3 +276,19 @@ export async function getInstructorAssignments(
 
 // Backwards-compatibility alias (if other code expects the old name)
 export { getInstructorAssignments as getFormRequestById };
+
+/**
+ * Gets the dashboard data for an instructor (stats and upcoming visits)
+ * @param instructorId - Instructor ID
+ * @returns Promise with dashboard data
+ */
+export async function getInstructorDashboard(instructorId: number) {
+  const url = ENDPOINTS.instructor.getInstructorDashboard.replace('{id}', String(instructorId));
+  const response = await fetch(url);
+  
+  if (!response.ok) {
+    throw new Error('Error al obtener dashboard del instructor');
+  }
+  
+  return response.json();
+}
