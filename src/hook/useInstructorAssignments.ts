@@ -39,7 +39,12 @@ export default function useInstructorAssignments(
       }
       
       const res = await getInstructorAssignments(id, apiFilters);
-      setData(Array.isArray(res) ? res : (res.data || []));
+      const dataArray = Array.isArray(res) ? res : (res.data || []);
+      if (dataArray.length > 0) {
+        console.log('First row state_asignation:', dataArray[0].state_asignation);
+        console.log('First row sample:', dataArray[0]);
+      }
+      setData(dataArray);
     } catch (e: any) {
       setError(e?.message || 'Error al obtener asignaciones');
       setData([]);
@@ -54,7 +59,11 @@ export default function useInstructorAssignments(
   }, [instructorId, filterState, filters, load]);
 
   const refresh = useCallback(() => {
-    if (instructorId) load(instructorId, filterState, filters);
+    if (instructorId) {
+      load(instructorId, filterState, filters);
+    } else {
+      console.warn('No instructorId, no se puede recargar');
+    }
   }, [instructorId, filterState, filters, load]);
 
   return { data, loading, error, refresh };

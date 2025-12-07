@@ -123,10 +123,8 @@ export async function validateInstitutionalLogin(email: string, password: string
  * @returns Promise with the result (success, message)
  */
 export async function verifyResetCode(email: string, code: string): Promise<{ success: boolean; message?: string }> {
-	console.log('Verificando código con:', { email, code }); // DEBUG
 	// Consultar a la BD si el código es correcto
 	const requestBody = { email, code, new_password: "dummy" };
-	console.log('Enviando al backend:', requestBody); // DEBUG
 	const response = await fetch(ENDPOINTS.user.resetPassword, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
