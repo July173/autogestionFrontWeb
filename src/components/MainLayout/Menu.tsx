@@ -250,7 +250,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
               <div className="w-12 h-12 rounded-lg flex items-center justify-center">
                 <img src={logo} alt="Logo" className="w-10 h-10" />
               </div>
-              <h1 className="text-white font-semibold">Autogestión CIES</h1>
+              <h1 className="text-white font-semibold">Autogestión SENA</h1>
             </div>
             {/* Scrollable menu area (igual que en desktop) */}
             <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
@@ -404,7 +404,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
         <div className="w-12 h-12 rounded-lg flex items-center justify-center">
           <img src={logo} alt="Logo" className="w-10 h-10" />
         </div>
-        <h1 className="text-white font-semibold">Autogestión CIES</h1>
+        <h1 className="text-white font-semibold">Autogestión SENA</h1>
       </div>
 
       {/* Scrollable menu area */}

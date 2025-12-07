@@ -11,6 +11,11 @@ type AssignmentRow = InstructorAssignment & {
   raw?: any;
   ficha?: string;
   modalidad?: string;
+  state_asignation?: string;
+  asignation_instructor_id?: number;
+  numero_ficha?: string;
+  programa?: string;
+  date_start_production_stage?: string;
 };
 
 interface InstructorAssignmentFilters {
@@ -82,6 +87,12 @@ const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState
         estado_solicitud: it.estado_solicitud || it.request_state || '',
         modalidad: it.modalidad || it.modality || '',
         ficha: it.ficha || it.file_number || '',
+        // ¡AGREGADO! Campo para el estado de asignación (usado en Following.tsx)
+        state_asignation: it.state_asignation || '',
+        asignation_instructor_id: it.asignation_instructor_id || it.id,
+        numero_ficha: it.numero_ficha || '',
+        programa: it.programa || '',
+        date_start_production_stage: it.date_start_production_stage || '',
         // messages array returned by the instructor assignments endpoint
         messages: messages,
         raw: it,
