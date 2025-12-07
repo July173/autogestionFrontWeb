@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { BsCalendar2Week, BsClockHistory, BsMortarboardFill, BsPersonCheck } from "react-icons/bs";
 import { User } from "../../Api/types/entities/user.types";
+import { getInstructorDashboard } from "@/Api/Services/Instructor";
+import { getUserById } from "@/Api/Services/User";
 
 
 /**
@@ -39,45 +41,96 @@ const InstructorDashboardCard: React.FC<InstructorDashboardCardProps> = ({ title
 
 /**
  * Instructor dashboard view.
- * Displays summary cards and scheduled visits.
- * Replace static data with real backend data as needed.
+ * Displays summary cards and scheduled visits from backend data.
  */
 export const InstructorDashboard: React.FC = () => {
   const [userData, setUserData] = useState<User | null>(null);
+  const [instructorId, setInstructorId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState({
+    visitas_programadas: 0,
+    aprendices_asignados: 0,
+    aprendices_evaluados: 0,
+  });
+  const [proximasVisitas, setProximasVisitas] = useState<any[]>([]);
 
+  // Cargar el ID del instructor desde el usuario en localStorage
   useEffect(() => {
-    const storedUser = localStorage.getItem("user_dashboard");
-    if (storedUser) {
+    const loadInstructorId = async () => {
       try {
-        const parsedUser: User = JSON.parse(storedUser);
-        setUserData(parsedUser);
+        const storedUser = localStorage.getItem("user_dashboard");
+        if (storedUser) {
+          const parsedUser: User = JSON.parse(storedUser);
+          setUserData(parsedUser);
+          
+          // Obtener el ID del instructor
+          const userId = parsedUser?.id;
+          if (userId) {
+            const user = await getUserById(userId);
+            const instructor = user?.instructor;
+            if (instructor && instructor.id) {
+              setInstructorId(Number(instructor.id));
+            } else {
+              setError('El usuario no tiene un instructor asociado');
+            }
+          }
+        }
       } catch (error) {
-        console.error("Error al parsear los datos del usuario desde el localStorage:", error);
+        console.error("Error al obtener instructor:", error);
+        setError('Error al cargar datos del usuario');
       }
-    }
+    };
+
+    loadInstructorId();
   }, []);
 
-  // Real backend data should be consumed here
-  // Example static data:
+  // Cargar datos del dashboard cuando tengamos el instructorId
+  useEffect(() => {
+    const loadDashboard = async () => {
+      if (!instructorId) return;
+      
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await getInstructorDashboard(instructorId);
+        if (response.success && response.data) {
+          setStats(response.data.stats);
+          setProximasVisitas(response.data.proximas_visitas || []);
+        } else {
+          setError('No se pudieron cargar los datos del dashboard');
+        }
+      } catch (err) {
+        console.error('Error al cargar dashboard:', err);
+        setError('Error al cargar los datos del dashboard');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboard();
+  }, [instructorId]);
+
   const cards = [
     {
       title: "Visitas programadas",
-      value: 2,
+      value: stats.visitas_programadas,
       subtitle: "Para esta semana",
       icon: <BsCalendar2Week className="text-green-700" size={24} />,
       bgIcon: "bg-green-200",
     },
     {
       title: "Aprendices Asignados",
-      value: 2,
+      value: stats.aprendices_asignados,
       subtitle: "Aprendices tienes asignados para ser evaluados",
       icon: <BsMortarboardFill className="text-green-700" size={24} />,
       bgIcon: "bg-green-200",
     },
     {
-      title: "Aprendices Evaluados",
-      value: 2,
-      subtitle: "Aprendices evaluados",
+      title: "Aprendices en proceso de seguimiento",
+      value: stats.aprendices_evaluados,
+      subtitle: "Aprendices en proceso",
       icon: <BsPersonCheck className="text-green-700" size={24} />,
       bgIcon: "bg-green-200",
     },
@@ -92,57 +145,71 @@ export const InstructorDashboard: React.FC = () => {
 
       {/* White panel that contains the rest */}
       <div className="w-full max-w-6xl bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        {/* Statistics Cards (three) - centered */}
-        <div className="w-full flex flex-wrap gap-5 justify-center items-center mb-6">
-          {cards.map((card, idx) => (
-            <div key={idx} className="w-56 flex justify-center">
-              <InstructorDashboardCard {...card} />
-            </div>
-          ))}
-        </div>
-
-        {/* Section Header (no button) */}
-        <div className="w-full flex justify-start items-center mb-6 px-2">
-          <h2 className="text-black text-2xl font-semibold">Aprendices Asignados</h2>
-        </div>
-
-        {/* Scheduled Visits Cards - centered, stronger shadow */}
-        <div className="w-full flex flex-wrap gap-6 justify-center items-start">
-          {[1, 2].map((_, idx) => (
-            <div key={idx} className="w-full sm:w-6/12 max-w-md p-5 bg-white rounded-lg flex flex-col gap-4 shadow-2xl border border-gray-100">
-              {/* Card Header */}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-green-100">
-                  <BsCalendar2Week className="text-green-700" size={20} />
+        {loading ? (
+          <div className="text-center py-8 text-gray-600">Cargando datos...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-600">{error}</div>
+        ) : (
+          <>
+            {/* Statistics Cards (three) - centered */}
+            <div className="w-full flex flex-wrap gap-5 justify-center items-center mb-6">
+              {cards.map((card, idx) => (
+                <div key={idx} className="w-56 flex justify-center">
+                  <InstructorDashboardCard {...card} />
                 </div>
-                <div className="text-black text-lg md:text-xl font-semibold">Visita programada</div>
-              </div>
-
-              {/* Card Content */}
-              <div className="text-gray-700 text-base">Tienes una visita programada</div>
-              
-              <div className="flex items-center gap-2 text-gray-800">
-                <BsPersonCheck className="text-green-700" size={18} />
-                <div className="text-gray-800 text-base">Carlos ruiz : 11292221893</div>
-              </div>
-
-              <div className="text-gray-700 text-base">
-                <span className="font-medium">Programa de formación:</span>
-                <div className="mt-1">desarrollo de videojuegos</div>
-              </div>
-
-              <div className="flex items-center gap-2 text-gray-800">
-                <BsClockHistory className="text-green-700" size={18} />
-                <div className="text-gray-800 text-base">Mañana</div>
-              </div>
-
-              {/* Button */}
-              <button className="w-full h-12 rounded-lg border border-gray-200 hover:bg-green-50 flex justify-center items-center transition-colors">
-                <span className="text-green-700 text-base font-medium">Ver detalles</span>
-              </button>
+              ))}
             </div>
-          ))}
-        </div>
+
+            {/* Section Header */}
+            <div className="w-full flex justify-start items-center mb-6 px-2">
+              <h2 className="text-black text-2xl font-semibold">Aprendices Asignados</h2>
+            </div>
+
+            {/* Scheduled Visits Cards - centered, stronger shadow */}
+            {proximasVisitas.length === 0 ? (
+              <div className="text-center py-8 text-gray-600">No hay visitas programadas próximamente</div>
+            ) : (
+              <div className="w-full flex flex-wrap gap-6 justify-center items-start">
+                {proximasVisitas.map((visita) => (
+                  <div key={visita.id} className="w-full sm:w-6/12 max-w-md p-5 bg-white rounded-lg flex flex-col gap-4 shadow-2xl border border-gray-100">
+                    {/* Card Header */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-green-100">
+                        <BsCalendar2Week className="text-green-700" size={20} />
+                      </div>
+                      <div className="text-black text-lg md:text-xl font-semibold">Visita programada</div>
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="text-gray-700 text-base">Tienes una visita programada</div>
+                    
+                    <div className="flex items-center gap-2 text-gray-800">
+                      <BsPersonCheck className="text-green-700" size={18} />
+                      <div className="text-gray-800 text-base">
+                        {visita.aprendiz_nombre} : {visita.aprendiz_identificacion}
+                      </div>
+                    </div>
+
+                    <div className="text-gray-700 text-base">
+                      <span className="font-medium">Programa de formación:</span>
+                      <div className="mt-1">{visita.programa}</div>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-gray-800">
+                      <BsClockHistory className="text-green-700" size={18} />
+                      <div className="text-gray-800 text-base">{visita.fecha_texto}</div>
+                    </div>
+
+                    {/* Button */}
+                    <button className="w-full h-12 rounded-lg border border-gray-200 hover:bg-green-50 flex justify-center items-center transition-colors">
+                      <span className="text-green-700 text-base font-medium">Ver detalles</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

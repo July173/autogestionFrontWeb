@@ -461,12 +461,10 @@ const UpdateStateModal: React.FC<UpdateStateModalProps> = ({
           const wasSuccess = notification.type === 'success';
           setNotification({ ...notification, show: false });
           if (wasSuccess) {
-            console.log('=== ÉXITO: Cerrando modal y recargando ===');
             // Primero cerrar el modal
             onClose();
             // Esperar un poco más para asegurar que el backend termine
             setTimeout(() => {
-              console.log('Ejecutando onSuccess para recargar tabla...');
               onSuccess();
             }, 300);
           }

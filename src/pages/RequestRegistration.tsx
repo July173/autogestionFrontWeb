@@ -491,7 +491,6 @@ export default function RequestRegistration() {
 
     // PASS THE TRANSFORMED DATA TO SUBMIT
     try {
-      console.log('Enviando datos principales:', updatedFormData);
 
       // Prepare date formatting helper
       const toDateStringLocal = (value: string | number | undefined) => {
@@ -559,11 +558,9 @@ export default function RequestRegistration() {
         request: requestPayload,
       };
 
-      console.log('nestedPayload a enviar:', nestedPayload);
 
       // Send to backend using existing service (it accepts any JSON body)
       const submitResponse = await postRequestAssignation(nestedPayload as unknown as requestAsignation);
-      console.log('Respuesta de envío (postRequestAssignation):', submitResponse);
       const requestId = submitResponse?.data?.id ?? submitResponse?.id ?? null;
       const backendMessage = submitResponse?.data?.message ?? submitResponse?.message ?? 'La solicitud fue enviada exitosamente.';
 
@@ -572,7 +569,6 @@ export default function RequestRegistration() {
         let pdfUploadResult = null;
         setPdfUploading(true);
         try {
-          console.log('Enviando PDF:', selectedFile, 'con request_id:', requestId);
           // ensure requestId is a number when passing to uploadPdf
           const numericRequestId = requestId ? Number(requestId) : undefined;
           if (!numericRequestId) {
@@ -582,7 +578,6 @@ export default function RequestRegistration() {
             return;
           }
           pdfUploadResult = await uploadPdf(selectedFile, numericRequestId);
-          console.log('Respuesta de uploadPdf:', pdfUploadResult);
         } catch (pdfErr) {
           console.error('Error al subir PDF:', pdfErr);
           showNotification({
