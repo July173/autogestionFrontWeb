@@ -16,16 +16,13 @@ export default function useOperatorRegister() {
   const checkOperatorRegistration = useCallback(async (requestId: number): Promise<boolean> => {
     try {
       const response = await getRequestMessages(requestId);
-      console.log(`[useOperatorRegister] Mensajes para solicitud ${requestId}:`, response);
       
       if (response.success && response.data) {
         // Buscar si hay algún mensaje del OPERADOR
         const hasOperatorMsg = response.data.some((msg: any) => {
           const whoseMsg = String(msg.whose_message || '').toUpperCase();
-          console.log(`[useOperatorRegister] Verificando mensaje ID ${msg.id}: whose_message="${whoseMsg}"`);
           return whoseMsg === 'OPERADOR';
         });
-        console.log(`[useOperatorRegister] ¿Tiene mensaje OPERADOR? ${hasOperatorMsg}`);
         return hasOperatorMsg;
       }
       return false;
@@ -51,9 +48,7 @@ export default function useOperatorRegister() {
         request_state: 'ASIGNADO', // Necesario para que el backend guarde el mensaje
       };
 
-      console.log('[useOperatorRegister] Enviando registro con payload:', payload);
       const response = await patchMessageRequest(requestId, payload);
-      console.log('[useOperatorRegister] Respuesta del backend:', response);
 
       return {
         success: true,

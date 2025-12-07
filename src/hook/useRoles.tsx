@@ -240,9 +240,7 @@ export function useRoles() {
   const handleConfirmEditRole = async () => {
     if (!pendingEditData || !editRole) return;
     try {
-      console.log('PUT payload for role update:', JSON.parse(JSON.stringify(pendingEditData)));
       const resp = await putRolFormPerms(editRole.id, pendingEditData);
-      console.log('PUT response for role update:', resp);
       setShowEdit(false);
       setShowEditConfirm(false);
       setPendingEditData(null);
