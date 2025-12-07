@@ -271,6 +271,12 @@ Enterprise :{
     deleteNotification : `${API_BASE_URL}general/notifications/delete-by-id/`,
     DeleteAll : `${API_BASE_URL}general/notifications/delete-by-user/`,
   },
+  VisitFollowing :{
+    getVisitFollowing : `${API_BASE_URL}assign/visit_following/`,
+    idVisitFollowing : `${API_BASE_URL}assign/visit_following/{id}/`,
+    PatchExluding : `${API_BASE_URL}assign/visit_following/{id}/patch-excluding/`,
+    PatchPdf : `${API_BASE_URL}assign/visit_following/{id}/upload-pdf/`,
+  },
 
 };
 
