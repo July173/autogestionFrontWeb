@@ -114,6 +114,7 @@ export const ENDPOINTS = {
     patchLimit: `${API_BASE_URL}general/instructors/{id}/update-learners/`,
     filterInstructores: `${API_BASE_URL}general/instructors/filter/`,
     getInstructorAssignments: `${API_BASE_URL}general/instructors/{id}/asignations/`,
+    getInstructorDashboard: `${API_BASE_URL}general/instructors/{id}/dashboard/`,
   },
   /** Endpoints for regionals */
   regional: {
