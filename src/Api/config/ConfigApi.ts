@@ -114,6 +114,7 @@ export const ENDPOINTS = {
     patchLimit: `${API_BASE_URL}general/instructors/{id}/update-learners/`,
     filterInstructores: `${API_BASE_URL}general/instructors/filter/`,
     getInstructorAssignments: `${API_BASE_URL}general/instructors/{id}/asignations/`,
+    getInstructorDashboard: `${API_BASE_URL}general/instructors/{id}/dashboard/`,
   },
   /** Endpoints for regionals */
   regional: {
@@ -270,6 +271,12 @@ Enterprise :{
     markAsRead : `${API_BASE_URL}general/notifications/{id}/`,
     deleteNotification : `${API_BASE_URL}general/notifications/delete-by-id/`,
     DeleteAll : `${API_BASE_URL}general/notifications/delete-by-user/`,
+  },
+  VisitFollowing :{
+    getVisitFollowing : `${API_BASE_URL}assign/visit_following/`,
+    idVisitFollowing : `${API_BASE_URL}assign/visit_following/{id}/`,
+    PatchExluding : `${API_BASE_URL}assign/visit_following/{id}/patch-excluding/`,
+    PatchPdf : `${API_BASE_URL}assign/visit_following/{id}/upload-pdf/`,
   },
 
 };

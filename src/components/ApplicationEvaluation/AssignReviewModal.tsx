@@ -113,9 +113,7 @@ export default function AssignReviewModal({ apprentice, isOpen, onClose, onAppro
           request_state: 'PRE-APROBADO',
         };
       }
-      console.log('[AssignReviewModal] calling performAction for confirm', { requestId: apprentice.request_id, ...payload });
       const result = await performAction(payload);
-      console.log('[AssignReviewModal] performAction result for confirm', { result });
       if (result.success) {
         setNotifType('success');
         setNotifTitle(currentAction === 'approve' ? 'Aprobación enviada' : 'Rechazo enviado');
@@ -141,8 +139,6 @@ export default function AssignReviewModal({ apprentice, isOpen, onClose, onAppro
   // Handler passed to ModalReject: receives rejectionMessage and performs API call
   const handleRejectConfirm = async (rejectionMessage: string) => {
     // Log start of rejection flow
-    console.log('[AssignReviewModal] handleRejectConfirm');
-    console.log('[AssignReviewModal] handleRejectConfirm called', { requestId: apprentice.request_id, rejectionMessage });
     if (!apprentice.request_id) {
       setNotifType('warning');
       setNotifTitle('Error');
@@ -159,9 +155,7 @@ export default function AssignReviewModal({ apprentice, isOpen, onClose, onAppro
         content: rejectionMessage,
         request_state: 'PRE-APROBADO', // Mantener en PRE-APROBADO para que el coordinador pueda revisar
       };
-      console.log('[AssignReviewModal] calling performAction for reject', { requestId: apprentice.request_id, ...payload });
       const result = await performAction(payload);
-      console.log('[AssignReviewModal] performAction result for reject', { result });
       // Close the reject modal only after the network call finished
       setShowRejectModal(false);
       if (result.success) {
