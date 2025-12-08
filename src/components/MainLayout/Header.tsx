@@ -53,7 +53,6 @@ const Header: React.FC<HeaderProps> = ({ moduleName, formName, userId: propUserI
   const finalUserId = propUserId ?? resolvedUserId ?? 0;
   const finalRole = propRole ?? resolvedRole ?? 'apprentice';
 
-  console.debug('Header: resolved user id and role for notifications', { finalUserId, finalRole });
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteById, deleteByUser } = useNotifications(finalUserId, finalRole);
 
   return (

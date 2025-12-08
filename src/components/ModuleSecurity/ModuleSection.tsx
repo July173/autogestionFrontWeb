@@ -66,7 +66,6 @@ const ModuleSection = ({ open, onToggle }: ModuleSectionProps) => {
         setForms(f);
       } catch (e) {
         // ignore fetch errors for forms
-        console.debug('Error loading forms for module association', e);
       } finally {
         setLoadingForms(false);
       }
