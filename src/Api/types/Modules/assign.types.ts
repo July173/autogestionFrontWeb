@@ -125,3 +125,34 @@ export type AssignmentRow = InstructorAssignment;
     type_message: string;
     whose_message: string;
   }
+
+  /** Visit following data */
+  export interface VisitFollowing {
+    id: number;
+    visit_number: number;
+    observations: string | null;
+    state_visit: string;
+    scheduled_date: string;
+    date_visit_made: string | null;
+    name_visit: string;
+    observation_state_visit: string | null;
+    pdf_report: string | null;
+    asignation_instructor: number;
+    state_asignation: string;
+  }
+
+  /** Response from visits by asignation endpoint */
+  export interface VisitsByAsignationResponse {
+    success: boolean;
+    visits: VisitFollowing[];
+    state_asignation: string;
+  }
+
+  /** Payload to update visit (excluding PDF) */
+  export interface UpdateVisitPayload {
+    observations: string;
+    state_visit: string;
+    date_visit_made: string;
+    observation_state_visit?: string;
+    state_asignation: string;
+  }
