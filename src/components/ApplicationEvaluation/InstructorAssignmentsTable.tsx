@@ -145,6 +145,7 @@ const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState
           <div className="flex-[2] px-2 text-center text-stone-500 text-sm">Nombre</div>
           <div className="flex-[2] px-2 text-center text-stone-500 text-sm">Tipo de identificación</div>
           <div className="flex-[2] px-2 text-center text-stone-500 text-sm">Número</div>
+          <div className="flex-[2] px-2 text-center text-stone-500 text-sm">Modalidad</div>
           <div className="flex-[2] px-2 text-center text-stone-500 text-sm">Fecha Solicitud</div>
           <div className="flex-1 px-2 text-center text-stone-500 text-sm">Estado</div>
           <div className="flex-1 px-2 text-center text-stone-500 text-sm">Acción</div>
@@ -183,6 +184,7 @@ const InstructorAssignmentsTable: React.FC<Props> = ({ instructorId, filterState
                       <div className="flex-[2] px-2 text-center text-sm text-black">{row.name}</div>
                       <div className="flex-[2] px-2 text-center text-sm text-black">{row.tipo_identificacion}</div>
                       <div className="flex-[2] px-2 text-center text-sm text-black">{row.numero_identificacion}</div>
+                      <div className="flex-[2] px-2 text-center text-sm text-black">{row.modalidad}</div>
                       <div className="flex-[2] px-2 text-center text-sm text-black">{row.fecha_solicitud}</div>
                       <div className="flex-1 px-2 text-center text-sm text-black">{row.estado_solicitud === 'ASIGNADO' ? 'Asignado' : (row.estado_solicitud === 'VERIFICANDO' ? 'Verificando' : row.estado_solicitud)}</div>
                       <div className="flex-1 px-2 text-center flex justify-center items-center" onClick={(e) => e.stopPropagation()}>
