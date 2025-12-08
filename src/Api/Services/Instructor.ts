@@ -120,11 +120,6 @@ export async function putInstructor(id: string, data: CreateInstructor) {
   if (data.sede !== undefined) payloadToSend.sede_id = Number(data.sede);
   if (data.is_followup_instructor !== undefined) payloadToSend.is_followup_instructor = !!data.is_followup_instructor;
 
-  try {
-    console.debug('putInstructor - payloadToSend', payloadToSend);
-  } catch (e) {
-    console.debug('putInstructor - payloadToSend stringify error', e);
-  }
   const response = await fetch(url, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -253,7 +248,6 @@ export async function getInstructorAssignments(
       }
     }
     
-    console.debug('[API] getInstructorAssignments ->', url);
     const response = await fetch(url);
     if (!response.ok) {
       try {
@@ -265,7 +259,6 @@ export async function getInstructorAssignments(
     }
 
     const result = await response.json();
-    console.debug('[API] getInstructorAssignments - result length:', Array.isArray(result) ? result.length : (result.data ? result.data.length : 'n/a'));
     // Support both { data: [...] } and [...] shapes
     return Array.isArray(result) ? result : (result.data || []);
   } catch (error) {

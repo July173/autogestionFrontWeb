@@ -142,24 +142,47 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
         <h2 className="text-xl font-bold mb-4">Registrar Nuevo Usuario-Sena</h2>
         <div className="flex mb-4 bg-gray-300 rounded-lg overflow-hidden p-2">
           <button className={`flex-1 py-2 font-semibold ${tab === 'aprendiz' ? 'bg-white rounded-xl shadow text-black' : 'text-gray-500'}`} onClick={() => setTab('aprendiz')}>Aprendiz</button>
-          <button className={`flex-1 py-2 font-semibold ${tab === 'instructor' ? 'bg-white  rounded-xl shadow text-black' : 'text-gray-500'}`} onClick={() => setTab('instructor')}>Instructor</button>
+          <button className={`flex-1 py-2 font-semibold ${tab === 'instructor' ? 'bg-white  rounded-xl shadow text-black' : 'text-gray-500'}`} onClick={() => setTab('instructor')}>Otro usuario</button>
         </div>
 
         <form onSubmit={handleSubmit}>
           {tab === 'aprendiz' ? (
             <ApprenticeForm apprentice={apprentice} handleChange={handleAprChange} programas={programas} fichas={fichasFromHook} documentTypesOptions={documentTypesOptions} />
           ) : (
-            <InstructorForm
-              instructor={instructor}
-              handleChange={handleInsChange}
-              documentTypesOptions={documentTypesOptions}
-              roles={roles}
-              regiones={regionales.map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
-              centrosFiltrados={centrosFiltrados.map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
-              sedesFiltradas={sedesFiltradas.map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
-              areas={areas.filter(opt => opt.active).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
-              contractTypesOptions={contractTypesOptions}
-            />
+            <>
+              <InstructorForm
+                instructor={instructor}
+                handleChange={handleInsChange}
+                documentTypesOptions={documentTypesOptions}
+                roles={roles}
+                regiones={regionales.map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                centrosFiltrados={centrosFiltrados.map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                sedesFiltradas={sedesFiltradas.map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                areas={areas.filter(opt => opt.active).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                contractTypesOptions={contractTypesOptions}
+              />
+              {/* Mostrar solo si el rol seleccionado es 'Instructor' */}
+              {(() => {
+                const selectedRoleObj = roles.find(opt => String(opt.id) === String(instructor.role));
+                const isInstructorRole = selectedRoleObj && selectedRoleObj.type_role?.toLowerCase() === 'instructor';
+                if (!isInstructorRole) return null;
+                return (
+                  <div className="mt-3">
+                    <label className="block text-sm">¿Instructor de seguimiento? <span className="text-red-600">*</span></label>
+                    <CustomSelect
+                      value={instructor.is_followup_instructor ? "true" : "false"}
+                      onChange={value => handleInsChange('is_followup_instructor', value === 'true')}
+                      options={[{ value: "true", label: "Sí" }, { value: "false", label: "No" }]}
+                      placeholder="Seleccionar ..."
+                      classNames={{
+                        trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                        label: "hidden",
+                      }}
+                    />
+                  </div>
+                );
+              })()}
+            </>
           )}
 
           {error && <div className="text-red-500 mt-2">{error}</div>}

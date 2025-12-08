@@ -200,8 +200,14 @@ export const InstructorDashboard: React.FC = () => {
                       <div className="text-gray-800 text-base">{visita.fecha_texto}</div>
                     </div>
 
-                    {/* Button */}
-                    <button className="w-full h-12 rounded-lg border border-gray-200 hover:bg-green-50 flex justify-center items-center transition-colors">
+                    {/* Button: Redirigir a Seguimiento */}
+                    <button
+                      className="w-full h-12 rounded-lg border border-gray-200 hover:bg-green-50 flex justify-center items-center transition-colors"
+                      type="button"
+                      onClick={() => {
+                        window.location.href = '/following';
+                      }}
+                    >
                       <span className="text-green-700 text-base font-medium">Ver detalles</span>
                     </button>
                   </div>
