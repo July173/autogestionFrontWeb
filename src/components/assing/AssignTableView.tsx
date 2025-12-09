@@ -424,7 +424,7 @@ const AssignTableView: React.FC<AssignTableViewProps> = ({
                                 <PdfView
                                   uri={
                                     detail.pdf_url.startsWith("/")
-                                      ? `${import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "")}${detail.pdf_url}`
+                                      ? `${import.meta.env.VITE_API_BASE?.replace(/\/$/, "")}${detail.pdf_url}`
                                       : detail.pdf_url
                                   }
                                   initialFullscreen={false}
