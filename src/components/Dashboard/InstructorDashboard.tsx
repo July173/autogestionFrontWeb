@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BsCalendar2Week, BsClockHistory, BsMortarboardFill, BsPersonCheck } from "react-icons/bs";
 import { User } from "../../Api/types/entities/user.types";
 import { getInstructorDashboard } from "@/Api/Services/Instructor";
@@ -44,6 +45,7 @@ const InstructorDashboardCard: React.FC<InstructorDashboardCardProps> = ({ title
  * Displays summary cards and scheduled visits from backend data.
  */
 export const InstructorDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState<User | null>(null);
   const [instructorId, setInstructorId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -205,7 +207,7 @@ export const InstructorDashboard: React.FC = () => {
                       className="w-full h-12 rounded-lg border border-gray-200 hover:bg-green-50 flex justify-center items-center transition-colors"
                       type="button"
                       onClick={() => {
-                        window.location.href = '/following';
+                        navigate('/following');
                       }}
                     >
                       <span className="text-green-700 text-base font-medium">Ver detalles</span>

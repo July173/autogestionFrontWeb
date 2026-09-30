@@ -1,9 +1,40 @@
 # 🎓 AutoGestión SENA - Frontend
 
-Sistema de gestión de asignaciones de instructores y seguimiento de aprendices en etapa productiva para el SENA.
+Sistema web de alto rendimiento para la gestión de asignaciones de instructores y seguimiento de aprendices en etapa productiva para el **SENA**.
+
+---
+
+## 🌐 Despliegues y Entornos Activos
+
+| Servicio | Plataforma | URL Pública | Estado |
+| :--- | :--- | :--- | :--- |
+| **Frontend Web en Producción** | Vercel Edge Network | [https://autogestion-sena.vercel.app](https://autogestion-sena.vercel.app) | `Online` 🟢 |
+| **Backend REST API** | Render Cloud Docker | [https://autogestion-sena-api.onrender.com](https://autogestion-sena-api.onrender.com) | `Online` 🟢 |
+| **Documentación Swagger** | Render Swagger UI | [https://autogestion-sena-api.onrender.com/swagger/](https://autogestion-sena-api.onrender.com/swagger/) | `Online` 🟢 |
+
+---
+
+## 🔑 Cuentas Demo y Acceso Rápido (1-Click Login)
+
+En la pantalla de inicio de sesión (`/` o `/?view=login`), la aplicación cuenta con un widget interactivo de **Cuentas de Demostración** que autocompleta las credenciales con 1 solo clic:
+
+- **Contraseña Común:** `Sena2026*`
+- **Código de Verificación 2FA:** `123456`
+
+| Rol | Correo Demo | Dashboard & Vistas |
+| :--- | :--- | :--- |
+| **Administrador** | `admin.demo@sena.edu.co` | `/admin` - Control de roles, formularios, permisos y auditoría |
+| **Aprendiz** | `aprendiz.demo@soy.sena.edu.co` | `/learner` - Estado de etapa productiva y solicitudes |
+| **Instructor** | `instructor.demo@sena.edu.co` | `/instructor` - Asignaciones, visitas programadas y bitácoras |
+| **Coordinador** | `coordinador.demo@sena.edu.co` | `/coordinator` - Cartas, pre-aprobación y balanceo de carga |
+| **Operador Sofia Plus** | `sofia.demo@sena.edu.co` | `/operator-ep` - Sincronización y registro masivo Excel |
+
+---
 
 ## 📋 Tabla de Contenidos
 
+- [Despliegues y Entornos Activos](#-despliegues-y-entornos-activos)
+- [Cuentas Demo y Acceso Rápido](#-cuentas-demo-y-acceso-rápido-1-click-login)
 - [Descripción](#descripción)
 - [Tecnologías](#tecnologías)
 - [Requisitos Previos](#requisitos-previos)
