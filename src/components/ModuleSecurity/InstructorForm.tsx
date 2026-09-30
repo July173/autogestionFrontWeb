@@ -82,10 +82,6 @@ export default function InstructorForm({ instructor, handleChange, documentTypes
         <label className="block text-sm">Rol <span className="text-red-600">*</span></label>
   <CustomSelect value={instructor.role ? String(instructor.role) : ""} onChange={value => handleChange('role' as keyof CreateInstructor, Number(value))} options={roles.filter(opt => opt.active && opt.type_role?.toLowerCase() !== 'aprendiz').map(opt => ({ value: String(opt.id), label: String(opt.type_role) }))} placeholder="Seleccionar ..." classNames={{ trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white", label: "hidden" }} />
       </div>
-      <div>
-        <label className="block text-sm">¿Instructor de seguimiento? <span className="text-red-600">*</span></label>
-  <CustomSelect value={instructor.is_followup_instructor ? "true" : "false"} onChange={value => handleChange('is_followup_instructor' as keyof CreateInstructor, value === 'true')} options={[{ value: "true", label: "Sí" }, { value: "false", label: "No" }]} placeholder="Seleccionar ..." classNames={{ trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white", label: "hidden" }} />
-      </div>
     </div>
   );
 }

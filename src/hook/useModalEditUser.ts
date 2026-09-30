@@ -319,7 +319,6 @@ export default function useModalEditUser({ userId, initialTab, onSuccess, onClos
       };
       const apprenticeId = getObjProp<number>(userData?.apprentice, 'id') ?? userId;
       try {
-        console.debug('PUT apprentice payload (pre-send)', payload);
         // Build API payload matching UpdateApprenticeSerializer expected fields
         const apiPayload = {
           type_identification: Number(payload.type_identification || 0),
@@ -334,9 +333,7 @@ export default function useModalEditUser({ userId, initialTab, onSuccess, onClos
           ficha: Number(payload.ficha_id ?? 0),
           role: Number(payload.role_id || payload.role || 0),
         };
-        console.debug('PUT apprentice payload (for API)', apiPayload);
         const putResult = await putApprentice(String(apprenticeId), apiPayload as unknown as CreateApprentice);
-        console.debug('PUT apprentice response', putResult);
         try {
           const refreshedUser = await getUserById(String(apprenticeId));
           if (refreshedUser && typeof refreshedUser === 'object') {
@@ -431,7 +428,6 @@ export default function useModalEditUser({ userId, initialTab, onSuccess, onClos
       const instructorId = getObjProp<number>(userData?.instructor, 'id') ?? userId;
       try {
         const putResult = await putInstructor(String(instructorId), payload as unknown as CreateInstructor);
-        console.debug('PUT instructor response', putResult);
         try {
           const refreshedUser = await getUserById(String(instructorId));
           if (refreshedUser && typeof refreshedUser === 'object') {

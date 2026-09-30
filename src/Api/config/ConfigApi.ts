@@ -29,18 +29,17 @@
  *   fetch(ENDPOINTS.user.deleteUser.replace('{id}', userId))
  */
 
-import { get } from "http";
-import { permission } from "process";
-import { getFichas } from "../Services/Ficha";
-import { create } from "domain";
-import { reassignInstructor } from "../Services/AssignationInstructor";
 
 
 /**
  * Base API URL. Configurable via the VITE_API_BASE_URL environment variable.
- * Defaults to "http://django:8000/api/" for local Docker environments.
+ * Automatically falls back to the production Render backend when deployed.
  */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://django:8000/api/";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD
+    ? "https://autogestion-sena-api.onrender.com/api/"
+    : "http://localhost:8000/api/");
 
 /**
  * ENDPOINTS: Object that groups all API routes by entity or module.

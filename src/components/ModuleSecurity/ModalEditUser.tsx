@@ -406,19 +406,28 @@ const ModalEditUser = ({ userId, userRole, onClose, onSuccess }) => {
                 />
                 {isEditingAdminSelf && <div className="text-xs text-gray-600 mt-1">No puedes cambiar el rol de tu propia cuenta de administrador.</div>}
               </div>
-              <div>
-                <label className="block text-sm">¿Instructor de seguimiento? <span className="text-red-600">*</span></label>
-                <CustomSelect
-                  value={instructor.is_followup_instructor ? "true" : "false"}
-                  onChange={value => handleInsChange('is_followup_instructor' as keyof CreateInstructor, value === 'true')}
-                  options={[{ value: "true", label: "Sí" }, { value: "false", label: "No" }]}
-                  placeholder="Seleccionar ..."
-                  classNames={{
-                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
-                    label: "hidden",
-                  }}
-                />
-              </div>
+              {/* Mostrar solo si el rol seleccionado es 'Instructor' */}
+              {(() => {
+                // Buscar el objeto de rol seleccionado
+                const selectedRoleObj = roles.find(opt => String(opt.id) === String(instructor.role));
+                const isInstructorRole = selectedRoleObj && selectedRoleObj.type_role?.toLowerCase() === 'instructor';
+                if (!isInstructorRole) return null;
+                return (
+                  <div>
+                    <label className="block text-sm">¿Instructor de seguimiento? <span className="text-red-600">*</span></label>
+                    <CustomSelect
+                      value={instructor.is_followup_instructor ? "true" : "false"}
+                      onChange={value => handleInsChange('is_followup_instructor' as keyof CreateInstructor, value === 'true')}
+                      options={[{ value: "true", label: "Sí" }, { value: "false", label: "No" }]}
+                      placeholder="Seleccionar ..."
+                      classNames={{
+                        trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                        label: "hidden",
+                      }}
+                    />
+                  </div>
+                );
+              })()}
             </div>
           ) : null}
           {/* Mensaje de error clásico (puedes quitarlo si solo quieres el modal) */}

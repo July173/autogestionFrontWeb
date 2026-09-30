@@ -9,6 +9,7 @@ import { isSenaEmail, isValidPassword } from '../../hook/validationlogin';
 import SenaLogo from '../SenaLogo';
 import SecondFactorModal from './SecondFactorModal';
 import LoadingOverlay from '../LoadingOverlay';
+import DemoAccountsSelector from './DemoAccountsSelector';
 
 /**
  * Props for LoginForm component.
@@ -27,6 +28,8 @@ interface LoginFormProps {
  * - Institutional email and password validation.
  * - Error and loading state management.
  * - Session persistence in localStorage.
+ * - Quick 1-click test credentials for portfolio reviewers.
+ * - Invisible honeypot bot defense.
  * - Navigation to registration and password recovery.
  *
  * @param {LoginFormProps} props
@@ -36,6 +39,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [honeypot, setHoneypot] = useState('');
   const [documentType, setDocumentType] = useState('');
   const [documentTypes, setDocumentTypes] = useState<{ id: number | ''; name: string }[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -60,8 +64,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
     setPasswordError(!isValidPassword(value) ? 'La contraseña debe tener al menos 8 caracteres.' : '');
   };
 
+  const handleSelectDemoAccount = (demoEmail: string, demoPassword: string) => {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setEmailError('');
+    setPasswordError('');
+    setError(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Protección Honeypot Anti-Bots (Regla 8)
+    if (honeypot.trim().length > 0) {
+      console.warn('Bot submission blocked via honeypot trap.');
+      return;
+    }
     setError(null);
     if (emailError || passwordError) return;
     setLoading(true);
@@ -112,6 +129,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Campo Honeypot invisible contra bots (Regla 8) */}
+          <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}>
+            <input
+              type="text"
+              name="institution_website_security"
+              tabIndex={-1}
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              autoComplete="off"
+            />
+          </div>
+
           <div className="sena-input-group">
             <Mail className="sena-input-icon" />
             <input
@@ -165,6 +194,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
             </button>
           </div>
         </form>
+
+        {/* Selector de Cuentas Demo de 1-Clic para Evaluadores */}
+        <DemoAccountsSelector
+          onSelectAccount={handleSelectDemoAccount}
+          selectedEmail={email}
+        />
 
         <FooterLinks />
       </div>
