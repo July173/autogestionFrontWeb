@@ -29,11 +29,6 @@
  *   fetch(ENDPOINTS.user.deleteUser.replace('{id}', userId))
  */
 
-import { get } from "http";
-import { permission } from "process";
-import { getFichas } from "../Services/Ficha";
-import { create } from "domain";
-import { reassignInstructor } from "../Services/AssignationInstructor";
 
 
 /**
